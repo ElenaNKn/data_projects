@@ -24,7 +24,7 @@ The dashboard includes the following daily metrics:
 
 <details>
   <summary><b>metrics 1 - 7</b></summary>
-    ```
+```
     WITH users_count 
     AS 
     (
@@ -40,7 +40,6 @@ The dashboard includes the following daily metrics:
         ) AS new_users
         GROUP BY date
     ), 
-
     couriers_count 
     AS 
     (
@@ -56,7 +55,6 @@ The dashboard includes the following daily metrics:
         ) AS new_couriers
     GROUP BY date
     )
-
     SELECT 
         date
         ,new_users
@@ -120,13 +118,13 @@ The dashboard includes the following daily metrics:
         ON users_count.date = act_couriers.date
     ) AS agg
     ORDER BY date
-    ```
+```
 </details>
 
 
 <details>
   <summary><b>metrics 8 - 9</b></summary>
-    ```
+```
     SELECT *
         -- share of the first orders in total orders
         ,ROUND(100 * first_orders::DECIMAL / orders, 2) AS first_orders_share
@@ -157,12 +155,12 @@ The dashboard includes the following daily metrics:
         GROUP BY date
     ) AS b
     ORDER BY date
-    ```
+```
 </details>
 
 <details>
   <summary><b>metric 10</b></summary>
-    ```
+```
     SELECT paying.date AS date
         ,ROUND(paying_users::DECIMAL / active_couriers, 2) AS users_per_courier
         ,ROUND(day_orders::DECIMAL / active_couriers, 2) AS orders_per_courier
@@ -192,12 +190,12 @@ The dashboard includes the following daily metrics:
     ) AS act_couriers
     ON paying.date = act_couriers.date
     ORDER BY date
-    ```
+```
 </details>
 
 <details>
   <summary><b>metric 11</b></summary>
-    ```
+```
     SELECT date
         ,AVG(order_minutes) FILTER (WHERE order_minutes > 0)::INT AS minutes_to_deliver
     FROM
@@ -212,12 +210,12 @@ The dashboard includes the following daily metrics:
     ) AS a
     GROUP BY date
     ORDER BY date
-     ```
+```
 </details>
 
 <details>
   <summary><b>metric 12</b></summary>
-    ```
+```
     SELECT hour::INTEGER
         ,COUNT(*) - SUM(is_canceled) AS successful_orders
         ,SUM(is_canceled) AS canceled_orders
@@ -233,7 +231,7 @@ The dashboard includes the following daily metrics:
     ) AS a
     GROUP BY hour
     ORDER BY hour
-     ```
+```
 </details>
 
 ## Tableau Dashboard
