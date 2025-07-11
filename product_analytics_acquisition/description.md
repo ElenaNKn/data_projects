@@ -24,7 +24,7 @@ The dashboard includes the following daily metrics:
 
 <details>
   <summary><b>metrics 1 - 7</b></summary>
-```
+```sql
     WITH users_count 
     AS 
     (
