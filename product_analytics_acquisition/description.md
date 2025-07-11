@@ -25,100 +25,101 @@ The dashboard includes the following daily metrics:
 <details>
   <summary><b>metrics 1 - 7</b></summary>
 ```sql
-    WITH users_count 
-    AS 
+WITH users_count 
+AS 
+(
+    SELECT start_date AS date
+        ,COUNT(*)::INT AS new_users
+        ,SUM(COUNT(*)) OVER (ORDER BY start_date)::INT AS total_users
+    FROM   
     (
-        SELECT start_date AS date
-            ,COUNT(*)::INT AS new_users
-            ,SUM(COUNT(*)) OVER (ORDER BY start_date)::INT AS total_users
-        FROM   
-        (
-            SELECT user_id
-                ,DATE(MIN(time)) as start_date    -- date of the first user action
-            FROM   user_actions
-            GROUP BY user_id
-        ) AS new_users
-        GROUP BY date
-    ), 
-    couriers_count 
-    AS 
-    (
-        SELECT start_date AS date
-            ,COUNT(*)::int AS new_couriers
-            ,SUM(COUNT(*)) OVER (ORDER BY start_date)::INT AS total_couriers
-        FROM   
-        (
-            SELECT courier_id
-                ,DATE(MIN(time)) AS start_date    -- date of the first user action
-            FROM courier_actions
-            GROUP BY courier_id
-        ) AS new_couriers
+        SELECT user_id
+            ,DATE(MIN(time)) as start_date    -- date of the first user action
+        FROM   user_actions
+        GROUP BY user_id
+    ) AS new_users
     GROUP BY date
-    )
-    SELECT 
-        date
+), 
+couriers_count 
+AS 
+(
+    SELECT start_date AS date
+        ,COUNT(*)::int AS new_couriers
+        ,SUM(COUNT(*)) OVER (ORDER BY start_date)::INT AS total_couriers
+    FROM   
+    (
+        SELECT courier_id
+            ,DATE(MIN(time)) AS start_date    -- date of the first user action
+        FROM courier_actions
+        GROUP BY courier_id
+    ) AS new_couriers
+GROUP BY date
+)
+SELECT 
+    date
+    ,new_users
+    ,new_couriers
+    ,total_users
+    ,paying_users
+    ,total_couriers
+    ,active_couriers
+    ,ROUND(100 * (new_users - prev_new_users) / (prev_new_users::decimal), 2) AS new_users_change
+    ,ROUND(100 * (total_users - prev_users) / prev_users::decimal, 2) AS total_users_growth
+    ,ROUND(100 * (new_couriers - prev_new_couriers) / prev_new_couriers::DECIMAL, 2) AS new_couriers_change
+    ,ROUND(100 * (total_couriers - prev_couriers) / prev_couriers::DECIMAL, 2) AS total_couriers_growth
+    ,ROUND(100 * paying_users / total_users::DECIMAL, 2) AS paying_users_share
+    ,ROUND(100 * active_couriers / total_couriers::DECIMAL, 2) AS active_couriers_share
+    ,ROUND(100 * single_order_users / paying_users::DECIMAL, 2) AS single_order_users_share
+    ,ROUND(100 * several_orders_users / paying_users::DECIMAL, 2) AS several_orders_users_share
+FROM   
+(
+    SELECT users_count.date AS date
         ,new_users
         ,new_couriers
         ,total_users
         ,paying_users
+        ,single_order_users
+        ,several_orders_users
         ,total_couriers
         ,active_couriers
-        ,ROUND(100 * (new_users - prev_new_users) / (prev_new_users::decimal), 2) AS new_users_change
-        ,ROUND(100 * (total_users - prev_users) / prev_users::decimal, 2) AS total_users_growth
-        ,ROUND(100 * (new_couriers - prev_new_couriers) / prev_new_couriers::DECIMAL, 2) AS new_couriers_change
-        ,ROUND(100 * (total_couriers - prev_couriers) / prev_couriers::DECIMAL, 2) AS total_couriers_growth
-        ,ROUND(100 * paying_users / total_users::DECIMAL, 2) AS paying_users_share
-        ,ROUND(100 * active_couriers / total_couriers::DECIMAL, 2) AS active_couriers_share
-        ,ROUND(100 * single_order_users / paying_users::DECIMAL, 2) AS single_order_users_share
-        ,ROUND(100 * several_orders_users / paying_users::DECIMAL, 2) AS several_orders_users_share
-    FROM   
-    (
-        SELECT users_count.date AS date
-            ,new_users
-            ,new_couriers
-            ,total_users
-            ,paying_users
-            ,single_order_users
-            ,several_orders_users
-            ,total_couriers
-            ,active_couriers
-            ,lag(new_users) OVER (ORDER BY users_count.date) AS prev_new_users
-            ,lag(new_couriers) OVER (ORDER BY users_count.date) AS prev_new_couriers
-            ,lag(total_users) OVER (ORDER BY users_count.date) AS prev_users
-            ,lag(total_couriers) OVER (ORDER BY users_count.date) AS prev_couriers
-        FROM users_count
-        LEFT JOIN (
-                    SELECT date
-                        ,COUNT(user_id) AS paying_users
-                        ,SUM(CASE WHEN orders_count = 1 THEN 1 ELSE 0 END) AS single_order_users
-                        ,SUM(CASE WHEN orders_count > 1 THEN 1 ELSE 0 END) AS several_orders_users
-                    FROM
-                    (
-                        SELECT DATE(time) AS date
-                            ,user_id
-                            ,COUNT(DISTINCT order_id) AS orders_count
-                        FROM user_actions 
-                        -- exclude canceled orders
-                        WHERE order_id NOT IN (SELECT order_id FROM user_actions WHERE action = 'cancel_order')
-                        GROUP BY date, user_id
-                    ) AS a
-                    GROUP BY date
-                ) AS paying
-        ON users_count.date = paying.date
-        LEFT JOIN couriers_count 
-        ON users_count.date = couriers_count.date
-        LEFT JOIN (
+        ,lag(new_users) OVER (ORDER BY users_count.date) AS prev_new_users
+        ,lag(new_couriers) OVER (ORDER BY users_count.date) AS prev_new_couriers
+        ,lag(total_users) OVER (ORDER BY users_count.date) AS prev_users
+        ,lag(total_couriers) OVER (ORDER BY users_count.date) AS prev_couriers
+    FROM users_count
+    LEFT JOIN (
+                SELECT date
+                    ,COUNT(user_id) AS paying_users
+                    ,SUM(CASE WHEN orders_count = 1 THEN 1 ELSE 0 END) AS single_order_users
+                    ,SUM(CASE WHEN orders_count > 1 THEN 1 ELSE 0 END) AS several_orders_users
+                FROM
+                (
                     SELECT DATE(time) AS date
-                        ,COUNT(DISTINCT courier_id) AS active_couriers
-                    FROM courier_actions 
+                        ,user_id
+                        ,COUNT(DISTINCT order_id) AS orders_count
+                    FROM user_actions 
                     -- exclude canceled orders
                     WHERE order_id NOT IN (SELECT order_id FROM user_actions WHERE action = 'cancel_order')
-                    GROUP BY date
-                ) AS act_couriers
-        ON users_count.date = act_couriers.date
-    ) AS agg
-    ORDER BY date
+                    GROUP BY date, user_id
+                ) AS a
+                GROUP BY date
+            ) AS paying
+    ON users_count.date = paying.date
+    LEFT JOIN couriers_count 
+    ON users_count.date = couriers_count.date
+    LEFT JOIN (
+                SELECT DATE(time) AS date
+                    ,COUNT(DISTINCT courier_id) AS active_couriers
+                FROM courier_actions 
+                -- exclude canceled orders
+                WHERE order_id NOT IN (SELECT order_id FROM user_actions WHERE action = 'cancel_order')
+                GROUP BY date
+            ) AS act_couriers
+    ON users_count.date = act_couriers.date
+) AS agg
+ORDER BY date
 ```
+
 </details>
 
 
