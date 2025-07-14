@@ -229,4 +229,7 @@ ORDER BY hour
 ```
 
 ## Tableau Dashboard
-The dashboard is uploaded at Tableau Public: https://public.tableau.com/views/Acquisitionmetricsofdeliveryservice/Dashboard
+The metrics visualization contains 3 dashboards uploaded at Tableau Public: 
+1. https://public.tableau.com/views/Acquisitionmetricsofdeliveryservice/Dashboard
+2. https://public.tableau.com/views/Acquisitionmetricsofdeliveryservice2/Dashboard2
+3. https://public.tableau.com/views/Acquisitionmetricsofdeliveryservice3/Dashboard3
