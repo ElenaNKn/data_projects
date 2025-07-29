@@ -236,13 +236,20 @@ The metrics visualization contains 3 dashboards uploaded at Tableau Public:
 
 <b>Dashboard 1</b>
 <br />
-<img src="dashboard_1.png" width="700" height="400" alt="Dashboard 1"/>
+<img src="dashboard_1.png" width="800" height="500" alt="Dashboard 1"/>
 <br />
 <b>Dashboard 2</b>
 <br />
-<img src="dashboard_2.png" width="700" height="400" alt="Dashboard 2"/>
+<img src="dashboard_2.png" width="800" height="500" alt="Dashboard 2"/>
 <br />
 <b>Dashboard 3</b>
 <br />
-<img src="dashboard_3.png" width="700" height="400" alt="Dashboard 3"/>
+<img src="dashboard_3.png" width="800" height="500" alt="Dashboard 3"/>
 <br />
+
+## Conclusions
+1. Count of users grows faster than count of couriers, but the growth of couriers is stabler. 
+There was a decrease in new user sign-ups on September 5-6. The reason for this decline should be analyzed further.
+2. The share of paying users shows negative dynamics: the number of users is growing much faster than the number of paying users. This trend should also be analyzed further to determine the reason. It could be that a certain acquisition channel is ineffective and it brings an "empty traffic".
+3. The situation with the courier count also demands attention. On average, delivering of one order takes 20 minutes, and each courier handles about 2 orders per day. This means their actual work for the service amounts to roughly 40 minutes daily.
+So the couriers may be underutilized. It's needed additional information about conditions of working with couriers to make a conclusion whether this situation is a problem.
