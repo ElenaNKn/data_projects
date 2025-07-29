@@ -236,13 +236,13 @@ The metrics visualization contains 3 dashboards uploaded at Tableau Public:
 
 <b>Dashboard 1</b>
 <br />
-<img src="dashboard_1.png" width="800" height="220" alt="Dashboard 1"/>
+<img src="dashboard_1.png" width="700" height="400" alt="Dashboard 1"/>
 <br />
 <b>Dashboard 2</b>
 <br />
-<img src="dashboard_2.png" width="800" height="220" alt="Dashboard 2"/>
+<img src="dashboard_2.png" width="700" height="400" alt="Dashboard 2"/>
 <br />
 <b>Dashboard 3</b>
 <br />
-<img src="dashboard_3.png" width="800" height="220" alt="Dashboard 3"/>
+<img src="dashboard_3.png" width="700" height="400" alt="Dashboard 3"/>
 <br />
