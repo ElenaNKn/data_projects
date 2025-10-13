@@ -11,8 +11,8 @@ The dashboard includes the following metrics:
 2. Total Revenue and Total Costs (cumulative values by days), calculated with different tax coefficients for multiple products;
 3. Daily Gross Profit and Gross Profit Ratio:
 4. Total Gross Profit and Total Gross Profit Ratio (cumulative values of daily metrics);
-5. ARPPPU (Average Revenue per Paying User), ARPU (Average Revenue per User) and AOV (Average Order value) dynamics by Days;
-6. ARPPPU (Average Revenue per Paying User), ARPU (Average Revenue per User) and AOV (Average Order value) distribution by Weekdays;
+5. ARPPPU (Average Revenue per Paying User), ARPU (Average Revenue per User) and AOV (Average Order Value) dynamics by Days;
+6. ARPPPU (Average Revenue per Paying User), ARPU (Average Revenue per User) and AOV (Average Order Value) distribution by Weekdays;
 7. Running ARPPU, ARPU and AOV by Day (cumulative values by days);
 8. Revenue from New Users (showing the share of revenue from new and existing users);
 9. Revenue by Products.
