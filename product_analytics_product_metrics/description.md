@@ -136,3 +136,201 @@ FROM
 ) AS a
 ORDER BY date
 ```
+
+<b>Metric 5</b>
+
+```sql
+WITH 
+all_users AS 
+(
+    SELECT DATE_TRUNC('day', time) AS date
+        ,COUNT(DISTINCT user_id) AS all_users_count
+    FROM user_actions
+    GROUP BY date
+)
+
+SELECT a.date AS date
+    ,ROUND(revenue::DECIMAL / all_users_count, 2) AS ARPU
+    ,ROUND(revenue::DECIMAL / paying_users, 2) AS ARPPU
+    ,ROUND(revenue::DECIMAL / orders_count, 2) AS AOV
+FROM
+(
+    SELECT date
+        ,SUM(price) AS revenue
+        ,COUNT(DISTINCT user_id) AS paying_users
+        ,COUNT(DISTINCT order_id) AS orders_count
+    FROM
+    (
+        SELECT DATE(creation_time) AS date
+            ,orders.order_id AS order_id
+            ,user_id
+            ,unnest(product_ids) AS product
+        FROM orders
+        JOIN user_actions
+        USING(order_id)
+        WHERE order_id NOT IN (SELECT DISTINCT order_id FROM user_actions WHERE action = 'cancel_order')
+    ) AS a
+    JOIN products 
+    ON a.product = products.product_id
+    GROUP BY date
+) AS a
+LEFT JOIN all_users 
+USING(date)
+ORDER BY date
+```
+
+<b>Metric 6</b>
+
+```sql
+with 
+revenue AS (
+SELECT weekday_number, SUM(price) AS revenue,
+       COUNT (DISTINCT order_id) AS orders
+FROM (
+      SELECT DATE_PART('isodow', creation_time)::INT AS weekday_number, order_id, unnest (product_ids) AS product_id
+      FROM orders
+      WHERE order_id NOT IN (SELECT order_id FROM user_actions WHERE action='cancel_order')
+        AND creation_time >= '2022-08-26' AND creation_time < '2022-09-09') t
+LEFT JOIN products USING (product_id)
+GROUP BY weekday_number
+),
+
+users AS
+(
+SELECT DATE_PART('isodow', time)::INT AS weekday_number 
+    ,to_char(min(time), 'Day') as weekday
+    ,COUNT (DISTINCT user_id) FILTER (WHERE order_id NOT IN (SELECT order_id FROM user_actions WHERE action='cancel_order')) AS paying_users
+    ,COUNT (DISTINCT user_id) AS all_users
+FROM user_actions
+WHERE time >= '2022-08-26' AND time < '2022-09-09'
+GROUP BY weekday_number 
+)
+
+SELECT weekday,
+    revenue.weekday_number AS weekday_number,
+   ROUND (revenue::DECIMAL/all_users, 2) AS arpu,
+   ROUND (revenue::DECIMAL/paying_users, 2) AS arppu,
+   ROUND (revenue::DECIMAL/orders, 2) AS aov
+FROM revenue LEFT JOIN users USING (weekday_number)
+ORDER BY weekday_number
+```
+
+<b>Metric 7</b>
+
+```sql
+with 
+revenue AS (
+SELECT date, SUM(price) AS revenue,
+       COUNT (DISTINCT order_id) AS orders
+FROM (
+      SELECT DATE (creation_time) AS date, order_id, unnest (product_ids) AS product_id
+      FROM orders
+      WHERE order_id NOT IN (SELECT order_id FROM user_actions WHERE action='cancel_order')) t
+LEFT JOIN products USING (product_id)
+GROUP BY date
+),
+
+users AS (
+SELECT date, SUM (new_users) OVER (ORDER BY date) AS running_users,
+       SUM (new_paying_users) OVER (ORDER BY date) AS running_paying_users
+FROM (SELECT date, COUNT (DISTINCT user_id) AS new_paying_users
+      FROM (SELECT user_id, MIN(time)::DATE as date
+            FROM user_actions
+            WHERE order_id NOT IN (SELECT order_id FROM user_actions WHERE action='cancel_order')
+            GROUP BY user_id) t1
+      GROUP BY date) t2
+LEFT JOIN 
+     (SELECT date, COUNT (user_id) as new_users
+      FROM (SELECT user_id, MIN(time)::DATE as date
+            FROM user_actions
+            GROUP BY user_id) t3
+      GROUP BY date) t4
+USING (date)
+)
+
+SELECT date,
+       ROUND (SUM (revenue) OVER (ORDER BY date)::DECIMAL/running_users, 2) AS running_arpu,
+       ROUND (SUM (revenue) OVER (ORDER BY date)::DECIMAL/running_paying_users, 2) AS running_arppu,
+       ROUND (SUM (revenue) OVER (ORDER BY date)::DECIMAL/SUM (orders) OVER (ORDER BY date ROWS UNBOUNDED PRECEDING), 2) AS running_aov
+FROM revenue LEFT JOIN users USING (date)
+ORDER BY date
+```
+
+<b>Metric 8</b>
+
+```sql
+SELECT *
+    ,ROUND(100 * new_users_revenue::DECIMAL / revenue, 2) AS new_users_revenue_share
+    ,ROUND(100 * (revenue - new_users_revenue)::DECIMAL / revenue, 2) AS old_users_revenue_share
+FROM
+(
+    SELECT date
+        ,SUM(price) FILTER (WHERE order_id NOT IN (SELECT DISTINCT order_id FROM user_actions WHERE action = 'cancel_order')) AS revenue
+        ,SUM(price) FILTER (WHERE date = start_user 
+                            AND order_id NOT IN (SELECT DISTINCT order_id FROM user_actions WHERE action = 'cancel_order')) AS new_users_revenue
+    FROM
+    (
+        SELECT DATE(creation_time) AS date 
+            ,orders.order_id AS order_id
+            ,MIN(DATE(time)) OVER (PARTITION BY user_id) AS start_user
+            ,unnest(product_ids) AS product
+        FROM orders
+        JOIN user_actions
+        ON user_actions.order_id = orders.order_id
+    ) AS a
+    JOIN products 
+    ON a.product = products.product_id
+    GROUP BY date
+) AS a
+ORDER BY date
+```
+
+<b>Metric 9</b>
+
+```sql
+SELECT product_name
+    ,SUM(a.revenue) AS revenue
+    ,SUM(a.share_in_revenue) AS share_in_revenue
+FROM
+(
+    SELECT CASE WHEN ROUND(100 * revenue::DECIMAL / SUM(revenue) OVER (), 2) < 0.5 THEN 'ДРУГОЕ' ELSE name END AS product_name
+        ,revenue
+        ,ROUND(100 * revenue::DECIMAL / SUM(revenue) OVER (), 2) AS share_in_revenue
+    FROM
+    (
+        SELECT name
+            ,SUM(price) AS revenue
+        FROM
+        (
+            SELECT unnest(product_ids) AS product
+            FROM orders
+            WHERE order_id NOT IN (SELECT DISTINCT order_id FROM user_actions WHERE action = 'cancel_order')
+        ) AS a
+        JOIN products 
+        ON a.product = products.product_id
+        GROUP BY name
+    ) AS a
+) AS a
+GROUP BY product_name
+ORDER BY share_in_revenue DESC
+```
+
+## Tableau Dashboards
+The metrics visualization contains 3 dashboards uploaded at Tableau Public:<br>
+https://public.tableau.com/app/profile/alena.kniazeva/viz/Productmetricsofdeliveryservice/Dashboard1
+
+<b>Dashboard 1</b>
+<br />
+<img src="images/dashboard1.png" width="800" height="500" alt="Dashboard 1"/>
+<br />
+<b>Dashboard 2</b>
+<br />
+<img src="images/dashboard2.png" width="800" height="500" alt="Dashboard 2"/>
+<br />
+<b>Dashboard 3</b>
+<br />
+<img src="images/dashboard3.png" width="800" height="500" alt="Dashboard 3"/>
+<br />
+
+## Conclusions
+1. 
