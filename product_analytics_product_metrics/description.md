@@ -12,7 +12,7 @@ The dashboard includes the following metrics:
 3. Daily Gross Profit and Gross Profit Ratio:
 4. Total Gross Profit and Total Gross Profit Ratio (cumulative values of daily metrics);
 5. ARPPPU (Average Revenue per Paying User), ARPU (Average Revenue per User) and AOV (Average Order Value) dynamics by Days;
-6. ARPPPU (Average Revenue per Paying User), ARPU (Average Revenue per User) and AOV (Average Order Value) distribution by Weekdays;
+6. ARPPPU, ARPU and AOV distribution by Weekdays;
 7. Running ARPPU, ARPU and AOV by Day (cumulative values by days);
 8. Revenue from New Users (showing the share of revenue from new and existing users);
 9. Revenue by Products.
@@ -333,4 +333,7 @@ https://public.tableau.com/app/profile/alena.kniazeva/viz/Productmetricsofdelive
 <br />
 
 ## Conclusions
-1. 
+1. There was a significant decrease in revenue on the 5th and 6th of September. To identify the reason for this decrease, we should refer to [the dashboard with acquisition metrics](https://public.tableau.com/app/profile/alena.kniazeva/viz/Acquisitionmetricsofdeliveryservice/Dashboard). There, we see that a significant decrease in new users led to the drop in revenue on those days.
+2. Revenue on weekends is slightly higher than on weekdays due to larger order count (this follows from the fact that revenue on weekends become higher while aov differs slightly).
+3. The service is building a stable core audience, with existing users contributing to about half of all revenue by the end of the period.
+4. The meat category generates the highest revenue of all the products delivered by the service.
