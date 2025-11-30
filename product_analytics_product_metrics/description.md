@@ -1,4 +1,4 @@
-# Product Metrics Dashboard
+# Revenue Metrics Dashboard
 
 This project uses data from the ["SQL simulator"](https://karpov.courses/simulator-sql).
 The goal is to build a dashboard to track product metrics of a delivery service.

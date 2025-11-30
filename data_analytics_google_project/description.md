@@ -20,4 +20,4 @@ The project is performed on the base of dataset ["Hr Analytics Job Prediction"](
 
 
 
-Project notebook: ["HR analytics"]()
+Project notebook: ["HR analytics"](https://github.com/ElenaNKn/data_projects/blob/master/data_analytics_google_project/notebook.ipynb)
