@@ -1,12 +1,12 @@
-# Data Analytics & Machine Learning Projects
+# Data Analytics Projects
 
-This repository contains data analytics and machine learning projects, completed by Alena Kniazeva.
+This repository contains data analytics projects, completed by Alena Kniazeva.
 
-## Data analytics and visualization projects
+## A/B-tests design and analysis projects
 
 | Project name          | Description          | Tools & Skills    |
 | :---                          | :---          |:---          |
-| [A/B-test analysis](https://github.com/ElenaNKn/data_projects/blob/master/project_ab_testing/notebook_ab_test.ipynb)  | Design of A/B test and analysis of it's result | Design of experiment, homogeneity check, statistical significance of difference between 2 variables, analysis of A/B test results for binary metric. Tools: python libraries (pandas, numpy, math, scipy.stats, statsmodels.stats)|
+| [A/B-test analysis](https://github.com/ElenaNKn/data_projects/blob/master/project_ab_testing/notebook_ab_test.ipynb)  | End-to-end A/B-test: from hypothesis formulation to result interpretation | Design of experiment, homogeneity check, statistical significance of difference between 2 variables, analysis of A/B test results for binary metric. Tools: python libraries (pandas, numpy, math, scipy.stats, statsmodels.stats)|
 
 ## Contacts
 
