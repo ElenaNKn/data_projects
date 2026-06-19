@@ -7,6 +7,7 @@ This repository contains data analytics projects, completed by Alena Kniazeva.
 | Project name          | Description          | Tools & Skills    |
 | :---                          | :---          |:---          |
 | [A/B-test analysis](https://github.com/ElenaNKn/data_projects/blob/master/project_ab_testing/notebook_ab_test.ipynb)  | End-to-end A/B-test: from hypothesis formulation to result interpretation | Design of experiment, homogeneity check, statistical significance of difference between 2 variables, analysis of A/B test results for binary metric. Tools: python libraries (pandas, numpy, math, scipy.stats, statsmodels.stats)|
+| [User Flow Sankey Diagram](https://github.com/ElenaNKn/data_projects/blob/master/project_sankey/description.md)  | A user flow map was built for users who ordered a product on a b2c e-commerce resource and subsequently returned it. Problem points were identified, and recommendations for reducing returns were provided | Database connection from Jupyter Notebook. EDA and Sankey diagram creation. Tools: SQL, Python (pandas, SQLAlchemy, requests, tqdm, plotly)|
 
 ## Contacts
 
