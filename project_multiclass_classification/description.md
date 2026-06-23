@@ -34,4 +34,4 @@ A classification model based on a decision tree was built, and optimal parameter
 
 Thus, logistic regression is chosen as the final model, with regularization parameter `C = 0.06`, automatic class balancing (`class_weight='balanced'`), and the "one-versus-rest" strategy for handling the multiclass setting (`multi_class='ovr'`). This model classified every instance in the test set correctly.
 
-НThe notebook of the project can be reached via the following link: ["Multiclass classification with imbalanced classes"](https://github.com/ElenaNKn/data_projects/blob/master/project_multiclass_classification/project.ipynb)
+The notebook of the project can be reached via the following link: ["Multiclass classification with imbalanced classes"](https://github.com/ElenaNKn/data_projects/blob/master/project_multiclass_classification/project.ipynb)
