@@ -1,8 +1,8 @@
 # Data Analytics Projects
 
-This repository contains data analytics and machine learning projects, completed by Alena Kniazeva.
+This repository contains data analytics projects, completed by Alena Kniazeva.
 
-## Data Analytics Projects
+## Data Analysis and Visualization Projects
 
 | Project name          | Description          | Tools & Skills    |
 | :---                          | :---          |:---          |
